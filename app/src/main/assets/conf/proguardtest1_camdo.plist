@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Application</key>
+	<array>
+		<dict>
+			<key>profileURL</key>
+			<string>https://collector.mobility.ca.com/mdo/collector/v2/profiles/CAMAAJP%40CA.COM-C/proguardtest1</string>
+			<key>baseURL</key>
+			<string>https://collector.mobility.ca.com/mdo/collector/v2</string>
+			<key>appId</key>
+			<string>proguardtest1</string>
+			<key>tenantID</key>
+			<string>CAMAAJP@CA.COM-C</string>
+			<key>appKey</key>
+			<string>fb883010-c412-11e5-9cfb-27d6d834cc49</string>
+		</dict>
+	</array>
+</dict>
+</plist>
