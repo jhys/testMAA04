@@ -20,7 +20,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Scanner;
+import java.util.Timer;
 import java.util.TimerTask;
 
 import com.ca.integration.CaMDOIntegration;
@@ -35,9 +38,13 @@ public class MainActivity extends Activity {
     TextView tv1;
     TextView tv2;
 
-    Handler timeHandler;
-    Boolean IsTimerStarting = false;
+    private Handler myHandler;
+    private Timer myTimer;
 
+    private SimpleDateFormat myDF = new SimpleDateFormat("dd/mm/yyyy hh:mm:ss");
+    Boolean isTimerStarting = false;
+
+    private long startTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,47 +59,58 @@ public class MainActivity extends Activity {
         tv1 = (TextView) findViewById(R.id.textView1);
         tv2 = (TextView) findViewById(R.id.textView2);
 
-        timeHandler = new Handler();
+        myHandler = new Handler(getMainLooper());
+        myTimer = new Timer();
+
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 /*********************************
-                CaMDOIntegration.startApplicationTransaction("Timer", "MyTest");
+ CaMDOIntegration.startApplicationTransaction("Timer", "MyTest");
 
-                for(int i=1; i<=5; i++) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    tv1.setText(String.valueOf(i) + ".0 seconds passed");
+ for(int i=1; i<=5; i++) {
+ try {
+ Thread.sleep(1000);
+ } catch (InterruptedException e) {
+ e.printStackTrace();
+ }
+ tv1.setText(String.valueOf(i) + ".0 seconds passed");
+
+ }
+
+ CaMDOIntegration.stopApplicationTransaction("Timer", "MyTest");
+ ***********************************/
+                if(isTimerStarting){
+                    myTimer.cancel();
+                    tv1.setText("Elapse Time : " + String.valueOf(System.currentTimeMillis() - startTime) + "  (ms)");
+                    isTimerStarting=false;
+                    btn1.setText("Timer");
 
                 }
+                else {
+                    startTime = System.currentTimeMillis();
 
-                CaMDOIntegration.stopApplicationTransaction("Timer", "MyTest");
-***********************************/
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        timeHandler.post(new Runnable() {
-                            public void run() {
-                                for(int i=1; i<=5; i++){
-                                    try {
-                                        Thread.sleep(1000);
-                                    }catch(InterruptedException e){
-                                        e.printStackTrace();
-                                    }
-                                    tv1.setText(String.valueOf(i) + ".0 seconds passed");
+                    myTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            myHandler.post(new Runnable() {
+                                public void run() {
+                                    Calendar myCal = Calendar.getInstance();
+                                    String nowDate = myDF.format(myCal.getTime());
+                                    tv1.setText(nowDate);
+                                    btn1.setText("Stop");
                                 }
-                            }
-                        });
-                    }
-                }).start();
+                            });
+                        }
+                    }, 0, 1000);
 
+                    isTimerStarting=true;
+                }
             }
         });
+
 
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
