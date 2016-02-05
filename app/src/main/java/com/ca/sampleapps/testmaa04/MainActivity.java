@@ -34,9 +34,11 @@ public class MainActivity extends Activity {
     Button btn2;
     Button btn3;
     Button btn4;
+    Button btn5;
 
     TextView tv1;
     TextView tv2;
+    TextView tv3;
 
     private Handler myHandler;
     private Timer myTimer;
@@ -58,6 +60,7 @@ public class MainActivity extends Activity {
 
         tv1 = (TextView) findViewById(R.id.textView1);
         tv2 = (TextView) findViewById(R.id.textView2);
+        tv3 = (TextView) findViewById(R.id.textView3);
 
         myHandler = new Handler(getMainLooper());
         myTimer = new Timer();
@@ -111,8 +114,8 @@ public class MainActivity extends Activity {
 
         btn3.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                RESTCall rc = new RESTCall();
-                rc.execute("https://httpbin.org/ip");
+                RESTCall rc = new RESTCall(tv2);
+                rc.execute("https://httpbin.org/ip", "origin");
             }
         });
 
@@ -127,18 +130,39 @@ public class MainActivity extends Activity {
             }
         });
 
+        btn5 = (Button)findViewById(R.id.button5);
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RESTCall rc = new RESTCall(tv3);
+                rc.execute("https://httpbin.org/user-agent", "user-agent");
+            }
+        });
+
     }
 
-    private class RESTCall extends AsyncTask<String, Void, JSONObject> {
+    private class RESTCall extends AsyncTask<String, Void, String> {
 
-        protected JSONObject doInBackground(String... urlREST) {
+        private TextView targetTextView;
 
-            JSONObject resultJSON = null;
+        private JSONObject resultJSON;
+        private String resultString;
+
+        RESTCall(TextView tv){
+            targetTextView = tv;
+        }
+
+        protected String doInBackground(String... args){
+
+
+            resultJSON = null;
+            resultString = null;
+
             HttpURLConnection httpConnection = null;
 
             try {
                 // Get the url into a URL object
-                URL url = new URL(urlREST[0]);
+                URL url = new URL(args[0]);
 
                 // Open the URL connection
                 httpConnection = (HttpURLConnection) url.openConnection();
@@ -150,10 +174,14 @@ public class MainActivity extends Activity {
                     // If we actually got something...
                     InputStream responseData = new BufferedInputStream(httpConnection.getInputStream());
                     resultJSON = new JSONObject(getResponseText(responseData));
+                    resultString = resultJSON.getString(args[1]);
+
                 } else {
                     // Return the HTTP error details
                     try {
                         resultJSON = new JSONObject("{\"id\":0,\"content\":\"" + "HTTP Error: " + String.format("%d", rc) + "\"}");
+                        resultString = resultJSON.getString("content");
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -162,6 +190,7 @@ public class MainActivity extends Activity {
                 // Malformed URL
                 try {
                     resultJSON = new JSONObject("{\"id\":0,\"content\":\"" + ex.getLocalizedMessage() + "\"}");
+                    resultString = resultJSON.getString("content");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -169,6 +198,7 @@ public class MainActivity extends Activity {
                 // IO Exception on the HTTP request
                 try {
                     resultJSON = new JSONObject("{\"id\":0,\"content\":\"" + ex.getLocalizedMessage() + "\"}");
+                    resultString = resultJSON.getString("content");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -176,6 +206,7 @@ public class MainActivity extends Activity {
                 // JSON parsing error
                 try {
                     resultJSON = new JSONObject("{\"id\":0,\"content\":\"" + ex.getLocalizedMessage() + "\"}");
+                    resultString = resultJSON.getString("content");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -184,19 +215,14 @@ public class MainActivity extends Activity {
             }
 
             // resultJSON should hold our resulting return JSONObject
-            return resultJSON;
+            return resultString;
         }
 
-        protected void onPostExecute(JSONObject jsonResult) {
+        protected void onPostExecute(String result) {
             // This is invoked when the background thread has completed
             // Get a reference to the content TextView
             // so we can update the text and its colour
-            try {
-                tv2.setText(jsonResult.getString("origin"));
-
-            } catch (JSONException ex) {
-                tv2.setText("ERROR : " + ex.getLocalizedMessage());
-            }
+                targetTextView.setText(result);
         }
 
         // Read the InputStream and get the JSON out as a string
