@@ -18,6 +18,7 @@ public class SecondActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CaMDOIntegration.startApplicationTransaction("FeedBack", "SecondActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
@@ -25,14 +26,15 @@ public class SecondActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!selection.equals(null)) {
-                    addSessionEvent(CAMAA_STRING, "What is your favorite band?", selection);
+                if (selection==null) {
+                    CaMDOIntegration.addSessionEvent(CAMAA_STRING, "What is your favorite band?", "no selection");
                 } else {
-                    addSessionEvent(CAMAA_STRING, "What is your favorite band?", "no selection");
+                    CaMDOIntegration.addSessionEvent(CAMAA_STRING, "What is your favorite band?", selection);
                 }
                 Intent i = new Intent(SecondActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
+                CaMDOIntegration.stopApplicationTransaction("FeedBack", "SecondActivity");
             }
         });
 
@@ -41,6 +43,7 @@ public class SecondActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 selection = ((RadioButton) findViewById(checkedId)).getText().toString();
+                CaMDOIntegration.takeScreenshot();
             }
         });
 

@@ -78,6 +78,7 @@ public class MainActivity extends Activity {
                     isTimerStarting=false;
                     btn1.setText("Timer");
 
+                    CaMDOIntegration.takeScreenshot();
                 }
                 else {
                     startTime = System.currentTimeMillis();
@@ -124,6 +125,7 @@ public class MainActivity extends Activity {
         btn4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CaMDOIntegration.takeScreenshot();
                 Intent i = new Intent(MainActivity.this, SecondActivity.class);
                 startActivity(i);
                 finish();
@@ -135,7 +137,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 RESTCall rc = new RESTCall(tv3);
-                rc.execute("https://httpbin.org/user-agent", "user-agent");
+                rc.execute("https://httpbin.org/headers", "headers", "User-Agent");
             }
         });
 
@@ -174,7 +176,11 @@ public class MainActivity extends Activity {
                     // If we actually got something...
                     InputStream responseData = new BufferedInputStream(httpConnection.getInputStream());
                     resultJSON = new JSONObject(getResponseText(responseData));
-                    resultString = resultJSON.getString(args[1]);
+                    if(args.length == 2) {
+                        resultString = resultJSON.getString(args[1]);
+                    }else{
+                        resultString = resultJSON.getJSONObject(args[1]).getString(args[2]);
+                    }
 
                 } else {
                     // Return the HTTP error details

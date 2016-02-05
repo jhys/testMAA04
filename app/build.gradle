@@ -3,13 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 23
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "com.ca.sampleapps.testmaa02"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName '2.0'
     }
     buildTypes {
         release {
@@ -17,6 +16,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile '/Users/hiyju01/Library/Android/sdk/tools/proguard/proguard-project.txt'
         }
+    }
+    productFlavors {
     }
 }
 
