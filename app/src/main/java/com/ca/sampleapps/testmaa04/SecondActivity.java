@@ -14,6 +14,7 @@ import com.ca.integration.CaMDOIntegration;
 
 public class SecondActivity extends AppCompatActivity {
 
+    private String selection=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,11 @@ public class SecondActivity extends AppCompatActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!selection.equals(null)) {
+                    addSessionEvent(CAMAA_STRING, "What is your favorite band?", selection);
+                } else {
+                    addSessionEvent(CAMAA_STRING, "What is your favorite band?", "no selection");
+                }
                 Intent i = new Intent(SecondActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
@@ -34,7 +40,7 @@ public class SecondActivity extends AppCompatActivity {
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                addSessionEvent(CAMAA_STRING, "What is your favorite band?", ((RadioButton)findViewById(checkedId)).getText().toString());
+                selection = ((RadioButton) findViewById(checkedId)).getText().toString();
             }
         });
 

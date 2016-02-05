@@ -66,22 +66,9 @@ public class MainActivity extends Activity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //MAA
+                CaMDOIntegration.startApplicationTransaction("Timer", "MyTest");
 
-/*********************************
- CaMDOIntegration.startApplicationTransaction("Timer", "MyTest");
-
- for(int i=1; i<=5; i++) {
- try {
- Thread.sleep(1000);
- } catch (InterruptedException e) {
- e.printStackTrace();
- }
- tv1.setText(String.valueOf(i) + ".0 seconds passed");
-
- }
-
- CaMDOIntegration.stopApplicationTransaction("Timer", "MyTest");
- ***********************************/
                 if(isTimerStarting){
                     myTimer.cancel();
                     tv1.setText("Elapse Time : " + String.valueOf(System.currentTimeMillis() - startTime) + "  (ms)");
@@ -101,11 +88,13 @@ public class MainActivity extends Activity {
                                     String nowDate = myDF.format(myCal.getTime());
                                     tv1.setText(nowDate);
                                     btn1.setText("Stop");
+
+                                    //MAA
+                                    CaMDOIntegration.stopApplicationTransaction("Timer", "MyTest");
                                 }
                             });
                         }
                     }, 0, 1000);
-
                     isTimerStarting=true;
                 }
             }
